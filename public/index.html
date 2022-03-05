@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to fastify chat app</title>
+    <meta name="description" content="A simple chat app using fastify" />
+    <meta name="author" content="Amanur Rahman" />
+    <meta name="keywords" content="chat" />
+    <link rel="stylesheet" href="./stylesheet.css" type="text/css" />
+    <style type="text/css">
+        .body {
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="menu">
+            <p class="welcome">Welcome, <b></b></p>
+            <!-- <p class="logout"><a id="exit" href="#">Exit Chat</a></p> -->
+        </div>
+
+        <div id="chatbox"></div>
+
+        <form name="message" method="post" onsubmit="onSubmit(event);" action="/">
+            <input name="usermsg" type="text" id="usermsg" />
+            <input name="submitmsg" type="submit" id="submitmsg" value="Send" onclick="onSubmit(event);" />
+        </form>
+    </div>
+    <script>
+        const socketUrl = 'localhost:3005/socket'
+        const socket = new WebSocket(`ws://${socketUrl}`)
+
+        const messageBox = document.getElementById("usermsg");
+        const chatBox = document.getElementById("chatbox");
+
+        function scrollToBottom() {
+            const height = chatBox.scrollHeight;
+            chatBox.scrollTo(0, height)
+        }
+
+        function receivedMessage(data) {
+            const divNode = document.createElement("dev");
+            divNode.className = "messageWrapper";
+
+            const paragraphNode = document.createElement("p");
+            paragraphNode.className = "message";
+            const messageTextNode = document.createTextNode(data.message);
+            paragraphNode.appendChild(messageTextNode);
+
+
+            const timeNode = document.createElement("p");
+            timeNode.className = "messageTime";
+            const timeNodeValue = document.createTextNode(new Date().toDateString());
+            timeNode.appendChild(timeNodeValue);
+
+
+            divNode.appendChild(paragraphNode);
+            divNode.appendChild(timeNode);
+            chatBox.appendChild(divNode);
+            scrollToBottom()
+        }
+
+        function onSubmit(event) {
+            const value = messageBox.value
+            event.preventDefault()
+            if (!value) return
+            const message = {
+                isMessage: true,
+                message: value
+            }
+            sendMessage(message)
+            receivedMessage(message)
+            messageBox.value = ''
+        }
+
+        socket.addEventListener('open', (event) => {
+            const message = {
+                isMessage: false,
+                message: "An user joined."
+            }
+
+            const messageMe = {
+                isMessage: false,
+                message: "You joined."
+
+            }
+            receivedMessage(messageMe)
+            sendMessage(message)
+
+        });
+
+        socket.addEventListener('message', (event) => {
+            const parsedData = JSON.parse(event.data)
+            receivedMessage(parsedData)
+        });
+
+        function sendMessage(message) {
+            socket.send(JSON.stringify(message));
+        }
+
+    </script>
+</body>
+
+</html>

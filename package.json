@@ -1,0 +1,29 @@
+{
+  "name": "fastifywebsocket",
+  "version": "1.0.0",
+  "description": "A chat app with node, fastify with fastify websocket",
+  "main": "index.js",
+  "private": true,
+  "homepage": "",
+  "repository": "https://github.com/amanur38/fastify-websocket-chat-app.git",
+  "author": "Amanur Rahman <ar@amanur.com> (https://amanur.com)",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^3.27.2",
+    "fastify-static": "^4.5.0",
+    "fastify-websocket": "^4.1.0"
+  },
+  "engines": {
+    "node": ">= 12",
+    "npm": ">= 6",
+    "yarn": "^0.13.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
